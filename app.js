@@ -44,6 +44,7 @@ app.use('/api/feeding-response-readings', require('./routes/feeding-response-rea
 app.use('/api/current-sensor-values', require('./routes/current-sensor-values'));
 app.use('/api/daily-sensor-summary', require('./routes/daily-sensor-summary'));
 app.use('/api/water-purity-readings', require('./routes/water-purity'));
+app.use('/api/norms', require('./routes/norms'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

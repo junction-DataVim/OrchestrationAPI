@@ -1,8 +1,21 @@
 const { send_alert } = require('../controllers/SMS-API');
-const { SENSOR_LIMITS, ALERT_CONTACTS, ALERT_COOLDOWN } = require('../config/sensor-limits');
 
 // Store last alert times to prevent spam
 const lastAlertTimes = new Map();
+
+// Alert cooldown in minutes
+const ALERT_COOLDOWN = 30;
+
+// Alert contacts
+const ALERT_CONTACTS = [
+    "213540392348",
+];
+
+// Get sensor limits from database
+const getSensorLimits = async () => {
+    const { getSensorLimits } = require('../config/sensor-limits');
+    return await getSensorLimits();
+};
 
 // Check if enough time has passed since last alert for this sensor/pool combination
 const canSendAlert = (sensorType, poolId) => {
@@ -26,8 +39,8 @@ const updateLastAlertTime = (sensorType, poolId) => {
 };
 
 // Check if a sensor value is outside acceptable limits
-const checkSensorLimits = (sensorType, value, poolId) => {
-  const limits = SENSOR_LIMITS[sensorType];
+const checkSensorLimits = (sensorType, value, poolId, sensorLimits) => {
+  const limits = sensorLimits[sensorType];
   if (!limits) {
     return null; // No limits defined for this sensor type
   }
@@ -66,7 +79,9 @@ const checkAndSendAlert = async (sensorType, sensorValue, poolId) => {
   try {
     console.log(`Checking alert for ${sensorType}: ${sensorValue} (Pool: ${poolId})`);
     
-    const alertInfo = checkSensorLimits(sensorType, sensorValue, poolId);
+    // Get current sensor limits from database
+    const sensorLimits = await getSensorLimits();
+    const alertInfo = checkSensorLimits(sensorType, sensorValue, poolId, sensorLimits);
     
     if (alertInfo && canSendAlert(sensorType, poolId)) {
       console.log(`Alert triggered for ${sensorType}: ${sensorValue}`);

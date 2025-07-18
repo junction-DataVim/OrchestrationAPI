@@ -621,6 +621,203 @@ const WaterPurityReading = sequelize.define('WaterPurityReading', {
     ]
 });
 
+// Define min and max values for each sensor type
+const Norms = sequelize.define('Norms', {
+    PhMax : {
+        type: DataTypes.DECIMAL(4, 2),
+        allowNull: false,
+        defaultValue: 8.5
+    },
+    PhMin : {
+        type: DataTypes.DECIMAL(4, 2),
+        allowNull: false,
+        defaultValue: 6.5
+    },
+    AmmoniaMax : {
+        type: DataTypes.DECIMAL(6, 3),
+        allowNull: false,
+        defaultValue: 0.25
+    },
+    AmmoniaMin : {
+        type: DataTypes.DECIMAL(6, 3),
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    NitriteMax : {
+        type: DataTypes.DECIMAL(6, 3),
+        allowNull: false,
+        defaultValue: 0.5
+    },
+    NitriteMin : {
+        type: DataTypes.DECIMAL(6, 3),
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    NitrateMax : {
+        type: DataTypes.DECIMAL(6, 2),
+        allowNull: false,
+        defaultValue: 40.0
+    },
+    NitrateMin : {
+        type: DataTypes.DECIMAL(6, 2),
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    DissolvedOxygenMax : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 15.0
+
+    },
+    DissolvedOxygenMin : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 5.0
+    },
+    OrpMax : {
+        type: DataTypes.DECIMAL(6, 1),
+        allowNull: false,
+        defaultValue: 500.0
+    },
+    OrpMin : {
+        type: DataTypes.DECIMAL(6, 1),
+        allowNull: false,
+        defaultValue: 300.0
+    },
+    SalinityMax : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 35.0
+    },
+    SalinityMin : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    TemperatureMax : {
+        type: DataTypes.DECIMAL(4, 1),
+        allowNull: false,
+        defaultValue: 30.0
+    },
+    TemperatureMin : {
+        type: DataTypes.DECIMAL(4, 1),
+        allowNull: false,
+        defaultValue: 15.0
+    },
+    TurbidityMax : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 5.0
+    },
+    TurbidityMin : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    WaterLevelMax : {
+        type: DataTypes.DECIMAL(6, 1),
+        allowNull: false,
+        defaultValue: 100.0
+    },
+    WaterLevelMin : {
+        type: DataTypes.DECIMAL(6, 1),
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    TocMax : {
+        type: DataTypes.DECIMAL(6, 2),
+        allowNull: false,
+        defaultValue: 10.0
+    },
+    TocMin : {
+        type: DataTypes.DECIMAL(6, 2),
+
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    FishActivityMax : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 100.0
+    },
+    FishActivityMin : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 0.0
+    },
+
+    FeedingResponseMax : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 100.0
+
+    },
+    FeedingResponseMin : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    WaterPurityMax : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+
+        defaultValue: 100.0
+    },
+    WaterPurityMin : {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 0.0
+    }
+}, {
+    tableName: 'norms',
+    timestamps: false,
+    indexes: [
+        {
+            fields: ['PhMax', 'PhMin']
+        },
+        {
+            fields: ['AmmoniaMax', 'AmmoniaMin']
+        },
+        {
+            fields: ['NitriteMax', 'NitriteMin']
+        },
+        {
+            fields: ['NitrateMax', 'NitrateMin']
+        },
+        {
+            fields: ['DissolvedOxygenMax', 'DissolvedOxygenMin']
+        },
+        {
+            fields: ['OrpMax', 'OrpMin']
+        },
+        {
+            fields: ['SalinityMax', 'SalinityMin']
+        }, 
+        {
+            fields: ['TemperatureMax', 'TemperatureMin']
+        },
+        {
+            fields: ['TurbidityMax', 'TurbidityMin']
+        },
+        {
+            fields: ['WaterLevelMax', 'WaterLevelMin']
+        },
+        {
+            fields: ['TocMax', 'TocMin']
+        },
+        {
+            fields: ['FishActivityMax', 'FishActivityMin']
+        },
+        {
+            fields: ['FeedingResponseMax', 'FeedingResponseMin']
+        },
+        {
+            fields: ['WaterPurityMax', 'WaterPurityMin']
+        }
+    ]
+});
+
+
 // Define associations
 Pool.hasMany(PhReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(AmmoniaReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
@@ -688,5 +885,6 @@ module.exports = {
     TocReading,
     FishActivityReading,
     FeedingResponseReading,
-    WaterPurityReading
+    WaterPurityReading,
+    Norms
 };
