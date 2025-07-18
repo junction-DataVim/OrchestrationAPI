@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { DissolvedOxygenReading, Pool } = require('../database/database');
+const { checkAndSendAlert } = require('../utils/alert-helper');
 
 // GET all dissolved oxygen readings
 router.get('/', async (req, res) => {
@@ -89,6 +90,9 @@ router.post('/', async (req, res) => {
         attributes: ['pool_id', 'number_of_fish', 'age_of_fish', 'capacity_liters']
       }]
     });
+
+    // Check for alerts after successful creation
+    await checkAndSendAlert('dissolved_oxygen', do_ppm, pool_id);
 
     res.status(201).json(readingWithPool);
   } catch (error) {

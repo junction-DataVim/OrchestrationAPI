@@ -11,6 +11,7 @@ This API provides real-time monitoring capabilities for aquaculture facilities, 
 - **Pool Management**: Create, read, update, and delete pool information
 - **Multi-Sensor Support**: Monitor 14 different water quality parameters
 - **Water Purity Prediction**: ML-based water quality assessment and prediction
+- **SMS Alerting System**: Automated SMS alerts when sensor values exceed safe limits
 - **Real-time Data**: Track sensor readings with timestamps
 - **Latest Readings**: Get the most recent sensor readings for each pool
 - **Pool-based Queries**: Retrieve all readings for a specific pool
@@ -18,7 +19,27 @@ This API provides real-time monitoring capabilities for aquaculture facilities, 
 - **SQLite Database**: Lightweight, embedded database with Sequelize ORM
 - **Data Validation**: Comprehensive input validation and error handling
 
-## 🛠️ Technology Stack
+## � SMS Alerting System
+
+The system includes an automated SMS alerting feature that monitors sensor readings in real-time and sends alerts when values exceed safe operating parameters.
+
+### Key Features:
+- **Automatic Monitoring**: All sensor readings are automatically checked against configured thresholds
+- **Instant Alerts**: SMS notifications sent immediately when limits are exceeded
+- **Spam Prevention**: 30-minute cooldown period prevents alert flooding
+- **Multiple Recipients**: Support for multiple phone numbers
+- **Comprehensive Coverage**: Monitors all 14 sensor types with appropriate thresholds
+
+### Alert Triggers:
+- pH outside 6.5-8.5 range
+- Ammonia above 0.25 ppm
+- Temperature outside 15-30°C range
+- Dissolved oxygen below 5.0 ppm
+- And more (see `config/sensor-limits.js` for complete list)
+
+For detailed configuration and usage, see [ALERT_SYSTEM.md](ALERT_SYSTEM.md).
+
+## �🛠️ Technology Stack
 
 - **Runtime**: Node.js
 - **Framework**: Express.js
@@ -270,6 +291,14 @@ curl "http://localhost:3000/api/ph-readings?pool_id=1&limit=50&offset=0"
 mainapi/
 ├── app.js                 # Main application file
 ├── package.json          # Dependencies and scripts
+├── ALERT_SYSTEM.md       # SMS alerting system documentation
+├── controllers/          # Business logic controllers
+│   ├── SMS-API.js        # SMS alert functionality
+│   └── water-purity.js   # Water purity prediction
+├── middleware/           # Express middleware
+│   └── sensor-alerts.js  # Sensor monitoring and alerting
+├── config/               # Configuration files
+│   └── sensor-limits.js  # Sensor thresholds and alert settings
 ├── database/
 │   ├── database.js       # Sequelize models and database connection
 │   └── pool_sensors.db   # SQLite database file
