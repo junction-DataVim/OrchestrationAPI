@@ -4,12 +4,13 @@ A comprehensive REST API for monitoring aquaculture pools and their sensor readi
 
 ## 🚀 Overview
 
-This API provides real-time monitoring capabilities for aquaculture facilities, tracking essential water quality parameters and fish behavior across multiple pools. The system supports 13 different sensor types and provides endpoints for data collection, retrieval, and analysis.
+This API provides real-time monitoring capabilities for aquaculture facilities, tracking essential water quality parameters and fish behavior across multiple pools. The system supports 14 different sensor types and provides endpoints for data collection, retrieval, and analysis.
 
 ## 📋 Features
 
 - **Pool Management**: Create, read, update, and delete pool information
-- **Multi-Sensor Support**: Monitor 13 different water quality parameters
+- **Multi-Sensor Support**: Monitor 14 different water quality parameters
+- **Water Purity Prediction**: ML-based water quality assessment and prediction
 - **Real-time Data**: Track sensor readings with timestamps
 - **Latest Readings**: Get the most recent sensor readings for each pool
 - **Pool-based Queries**: Retrieve all readings for a specific pool
@@ -46,6 +47,9 @@ The system tracks the following water quality and fish activity parameters:
 12. **Fish Activity Readings** - Activity level, movement count, and average speed
 13. **Feeding Response Readings** - Strike rate, feeding attempts, successful strikes, and response time
 
+### Water Quality Assessment
+14. **Water Purity Readings** - Overall water quality assessment with quality rating and percentage scores
+
 ## 🗄️ Database Schema
 
 ### Pools Table
@@ -79,6 +83,7 @@ Each sensor type has its own table with the following common structure:
 - **TOC**: `toc_ppm` (DECIMAL 6,2), `bod_ppm` (DECIMAL 6,2)
 - **Fish Activity**: `activity_level` (DECIMAL 5,2), `movement_count` (INTEGER), `average_speed` (DECIMAL 5,2)
 - **Feeding Response**: `strike_rate_percent` (DECIMAL 5,2), `feeding_attempts` (INTEGER), `successful_strikes` (INTEGER), `response_time_seconds` (DECIMAL 5,2)
+- **Water Purity**: `quality` (STRING), `good` (DECIMAL 5,2), `excellent` (DECIMAL 5,2), `poor` (DECIMAL 5,2)
 
 ## 🚀 Getting Started
 
@@ -151,6 +156,7 @@ All sensor endpoints follow the same pattern:
 - `/api/toc-readings`
 - `/api/fish-activity-readings`
 - `/api/feeding-response-readings`
+- `/api/water-purity-readings`
 
 ### Special Endpoints
 - `GET /api/current-sensor-values/latest/:pool_id` - Get latest readings from all sensor types for a specific pool
@@ -159,6 +165,14 @@ All sensor endpoints follow the same pattern:
 - `GET /api/daily-sensor-summary` - Get daily aggregated statistics (with query parameters: `pool_id`, `sensor_type`, `start_date`, `end_date`)
 - `GET /api/daily-sensor-summary/:id` - Get daily sensor summary by ID
 - `POST /api/daily-sensor-summary` - Create daily sensor summary
+
+### Water Purity Prediction
+- `GET /api/water-purity-readings/latest/:pool_id` - Get latest water purity reading and trigger prediction service
+- `GET /api/water-purity-readings/:pool_id` - Get all water purity readings for a specific pool
+- `GET /api/water-purity-readings` - Get all water purity readings (supports pagination)
+- `POST /api/water-purity-readings` - Create new water purity reading
+
+**Note**: The water purity prediction endpoint integrates with an external machine learning service to analyze water quality based on sensor readings.
 
 ## 📝 API Usage Examples
 
@@ -197,9 +211,32 @@ curl -X POST http://localhost:3000/api/dissolved-oxygen-readings \
   }'
 ```
 
+### Add a Water Purity Reading
+```bash
+curl -X POST http://localhost:3000/api/water-purity-readings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pool_id": 1,
+    "quality": "good",
+    "good": 75.5,
+    "excellent": 20.2,
+    "poor": 4.3
+  }'
+```
+
 ### Get All Readings for a Pool
 ```bash
 curl http://localhost:3000/api/ph-readings/1
+```
+
+### Get Water Purity Readings for a Pool
+```bash
+curl http://localhost:3000/api/water-purity-readings/1
+```
+
+### Get Latest Water Purity Reading with Prediction
+```bash
+curl http://localhost:3000/api/water-purity-readings/latest/1
 ```
 
 ### Get Latest Sensor Readings for a Pool
@@ -243,6 +280,7 @@ mainapi/
 ├── routes/               # API route handlers
 │   ├── pools.js
 │   ├── ph-readings.js
+│   ├── water-purity-readings.js
 │   ├── current-sensor-values.js
 │   ├── daily-sensor-summary.js
 │   └── [other sensor routes]
@@ -263,6 +301,8 @@ The API includes comprehensive data validation:
   - Temperature: Reasonable aquaculture ranges
   - PPM values: Non-negative numbers
   - Percentages: 0-100 range for saturation values
+  - Quality ratings: Must be valid quality levels (e.g., "excellent", "good", "poor")
+  - Purity percentages: Sum of good, excellent, and poor should be approximately 100%
 - **Required Fields**: Pool ID and primary sensor value are required
 - **Data Types**: Proper decimal precision for each measurement type
 - **Timestamps**: Automatically generated if not provided
@@ -330,7 +370,7 @@ The dummy data injector creates:
 - 4 pools with varying configurations
 - 20 readings per sensor type per pool
 - Realistic sensor values within appropriate ranges
-- Covers all 13 sensor types
+- Covers all 14 sensor types including water purity assessments
 
 ## 📈 Performance Considerations
 

@@ -570,6 +570,57 @@ const FeedingResponseReading = sequelize.define('FeedingResponseReading', {
     ]
 });
 
+// Define Water Purity Readings model
+const WaterPurityReading = sequelize.define('WaterPurityReading', {
+    reading_id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    pool_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Pool,
+            key: 'pool_id'
+        }
+    },
+    quality: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
+    good: {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false
+    },
+    excellent: {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false
+    },
+    poor: {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false
+    },
+    reading_timestamp: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    },
+    notes: {
+        type: DataTypes.TEXT
+    }
+}, {
+    tableName: 'water_purity_readings',
+    timestamps: false,
+    indexes: [
+        {
+            fields: ['pool_id', 'reading_timestamp']
+        },
+        {
+            fields: ['pool_id', 'reading_timestamp', 'quality']
+        }
+    ]
+});
+
 // Define associations
 Pool.hasMany(PhReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(AmmoniaReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
@@ -584,6 +635,7 @@ Pool.hasMany(WaterLevelReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(TocReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(FishActivityReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(FeedingResponseReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
+Pool.hasMany(WaterPurityReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 
 // Reverse associations
 PhReading.belongsTo(Pool, { foreignKey: 'pool_id' });
@@ -599,6 +651,7 @@ WaterLevelReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 TocReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 FishActivityReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 FeedingResponseReading.belongsTo(Pool, { foreignKey: 'pool_id' });
+WaterPurityReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 
 // Database initialization function
 const initializeDatabase = async () => {
@@ -634,5 +687,6 @@ module.exports = {
     WaterLevelReading,
     TocReading,
     FishActivityReading,
-    FeedingResponseReading
+    FeedingResponseReading,
+    WaterPurityReading
 };

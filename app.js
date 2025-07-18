@@ -1,6 +1,9 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const { initializeDatabase } = require('./database/database');
+const cron = require('node-cron')
+const waterPurityController = require('./controllers/water-purity');
+const {Pool} = require('./database/database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,6 +11,20 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+// Schedule a task to run every 5 minutes
+cron.schedule('*/5 * * * *', async () => {
+  pools = await Pool.findAll();
+  pools.forEach(pool => {
+    waterPurityController.water_purity(pool.pool_id)
+      .then(response => {
+        console.log(`Water purity for pool ${pool.pool_id} updated successfully.`);
+      })
+      .catch(error => {
+        console.error(`Error updating water purity for pool ${pool.pool_id}:`, error);
+      });
+  }
+)});
 
 // Routes
 app.use('/api/pools', require('./routes/pools'));
@@ -26,6 +43,7 @@ app.use('/api/fish-activity-readings', require('./routes/fish-activity-readings'
 app.use('/api/feeding-response-readings', require('./routes/feeding-response-readings'));
 app.use('/api/current-sensor-values', require('./routes/current-sensor-values'));
 app.use('/api/daily-sensor-summary', require('./routes/daily-sensor-summary'));
+app.use('/api/water-purity-readings', require('./routes/water-purity'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
