@@ -1,0 +1,287 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Aquaculture Monitoring System API",
+    "description": "A comprehensive API for monitoring aquaculture pools and sensor readings. This system tracks various water quality parameters, fish behavior, and environmental conditions to help maintain optimal conditions for aquaculture operations.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "support@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Pools",
+      "description": "Pool management operations"
+    },
+    {
+      "name": "Sensor Readings",
+      "description": "All sensor reading operations"
+    },
+    {
+      "name": "Current Values",
+      "description": "Latest sensor values across all sensor types"
+    },
+    {
+      "name": "Summaries",
+      "description": "Daily aggregated sensor statistics"
+    },
+    {
+      "name": "Configuration",
+      "description": "System configuration and sensor limits"
+    }
+  ],
+  "paths": {
+    "/pools": {
+      "get": {
+        "summary": "Get all pools",
+        "tags": ["Pools"],
+        "responses": {
+          "200": {
+            "description": "List of pools"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new pool",
+        "tags": ["Pools"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "number_of_fish": {
+                    "type": "integer",
+                    "description": "Number of fish in the pool"
+                  },
+                  "age_of_fish": {
+                    "type": "integer",
+                    "description": "Age of fish in days"
+                  },
+                  "capacity_liters": {
+                    "type": "number",
+                    "description": "Pool capacity in liters"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Pool name"
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "Pool location"
+                  }
+                },
+                "required": ["capacity_liters"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pool created successfully"
+          }
+        }
+      }
+    },
+    "/pools/{id}": {
+      "get": {
+        "summary": "Get pool by ID",
+        "tags": ["Pools"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pool details"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update pool",
+        "tags": ["Pools"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pool updated successfully"
+          }
+        }
+      }
+    },
+    "/current-sensor-values/latest/{pool_id}": {
+      "get": {
+        "summary": "Get latest sensor readings for a pool",
+        "tags": ["Current Values"],
+        "parameters": [
+          {
+            "name": "pool_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Latest sensor readings for the pool"
+          }
+        }
+      }
+    },
+    "/daily-sensor-summary": {
+      "get": {
+        "summary": "Get daily sensor summaries",
+        "tags": ["Summaries"],
+        "parameters": [
+          {
+            "name": "pool_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sensor_type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of daily sensor summaries"
+          }
+        }
+      }
+    },
+    "/norms": {
+      "get": {
+        "summary": "Get sensor limits/norms",
+        "tags": ["Configuration"],
+        "responses": {
+          "200": {
+            "description": "Current sensor norms"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update sensor limits/norms",
+        "tags": ["Configuration"],
+        "responses": {
+          "200": {
+            "description": "Norms updated successfully"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pool": {
+        "type": "object",
+        "properties": {
+          "pool_id": {
+            "type": "integer",
+            "description": "Unique identifier for the pool"
+          },
+          "number_of_fish": {
+            "type": "integer",
+            "description": "Number of fish in the pool"
+          },
+          "age_of_fish": {
+            "type": "integer",
+            "description": "Age of fish in days"
+          },
+          "capacity_liters": {
+            "type": "number",
+            "description": "Pool capacity in liters"
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool name"
+          },
+          "location": {
+            "type": "string",
+            "description": "Pool location"
+          }
+        }
+      },
+      "SensorReading": {
+        "type": "object",
+        "properties": {
+          "reading_id": {
+            "type": "integer",
+            "description": "Unique identifier for the reading"
+          },
+          "pool_id": {
+            "type": "integer",
+            "description": "Pool identifier"
+          },
+          "value": {
+            "type": "number",
+            "description": "Sensor reading value"
+          },
+          "reading_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Reading timestamp"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      }
+    }
+  }
+}

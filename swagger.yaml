@@ -1,0 +1,2471 @@
+openapi: 3.0.3
+info:
+  title: Aquaculture Monitoring System API
+  description: |
+    A comprehensive API for monitoring aquaculture pools and sensor readings.
+    This system tracks various water quality parameters, fish behavior, and environmental conditions
+    to help maintain optimal conditions for aquaculture operations.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+paths:
+  # Pools endpoints
+  /pools:
+    get:
+      tags:
+        - Pools
+      summary: Get all pools
+      description: Retrieve a list of all aquaculture pools
+      responses:
+        '200':
+          description: List of pools
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pool'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Pools
+      summary: Create a new pool
+      description: Add a new aquaculture pool to the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PoolCreate'
+      responses:
+        '201':
+          description: Pool created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pool'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /pools/{id}:
+    get:
+      tags:
+        - Pools
+      summary: Get pool by ID
+      description: Retrieve a specific pool by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pool details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pool'
+        '404':
+          description: Pool not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Pools
+      summary: Update pool
+      description: Update an existing pool's information
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PoolUpdate'
+      responses:
+        '200':
+          description: Pool updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pool'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Pool not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # pH Readings endpoints
+  /ph-readings:
+    get:
+      tags:
+        - pH Readings
+      summary: Get all pH readings
+      description: Retrieve pH readings with optional filtering
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of pH readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhReading'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - pH Readings
+      summary: Create new pH reading
+      description: Add a new pH reading for a pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhReadingCreate'
+      responses:
+        '201':
+          description: pH reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhReading'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ph-readings/{id}:
+    get:
+      tags:
+        - pH Readings
+      summary: Get pH readings by pool ID
+      description: Retrieve all pH readings for a specific pool
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of pH readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhReading'
+        '404':
+          description: No pH readings found for this pool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Temperature Readings endpoints
+  /temperature-readings:
+    get:
+      tags:
+        - Temperature Readings
+      summary: Get all temperature readings
+      description: Retrieve temperature readings with optional filtering
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of temperature readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemperatureReading'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Temperature Readings
+      summary: Create new temperature reading
+      description: Add a new temperature reading for a pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemperatureReadingCreate'
+      responses:
+        '201':
+          description: Temperature reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemperatureReading'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /temperature-readings/{id}:
+    get:
+      tags:
+        - Temperature Readings
+      summary: Get temperature readings by pool ID
+      description: Retrieve all temperature readings for a specific pool
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of temperature readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemperatureReading'
+        '404':
+          description: No temperature readings found for this pool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Ammonia Readings endpoints
+  /ammonia-readings:
+    get:
+      tags:
+        - Ammonia Readings
+      summary: Get all ammonia readings
+      description: Retrieve ammonia readings with optional filtering
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of ammonia readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Ammonia Readings
+      summary: Create new ammonia reading
+      description: Add a new ammonia reading for a pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorReadingCreate'
+      responses:
+        '201':
+          description: Ammonia reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorReading'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ammonia-readings/{id}:
+    get:
+      tags:
+        - Ammonia Readings
+      summary: Get ammonia readings by pool ID
+      description: Retrieve all ammonia readings for a specific pool
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of ammonia readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+        '404':
+          description: No ammonia readings found for this pool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Nitrite Readings endpoints
+  /nitrite-readings:
+    get:
+      tags:
+        - Nitrite Readings
+      summary: Get all nitrite readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of nitrite readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+    post:
+      tags:
+        - Nitrite Readings
+      summary: Create new nitrite reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorReadingCreate'
+      responses:
+        '201':
+          description: Nitrite reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorReading'
+
+  /nitrite-readings/{id}:
+    get:
+      tags:
+        - Nitrite Readings
+      summary: Get nitrite readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of nitrite readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+
+  # Nitrate Readings endpoints
+  /nitrate-readings:
+    get:
+      tags:
+        - Nitrate Readings
+      summary: Get all nitrate readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of nitrate readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+    post:
+      tags:
+        - Nitrate Readings
+      summary: Create new nitrate reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorReadingCreate'
+      responses:
+        '201':
+          description: Nitrate reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorReading'
+
+  /nitrate-readings/{id}:
+    get:
+      tags:
+        - Nitrate Readings
+      summary: Get nitrate readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of nitrate readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+
+  # Dissolved Oxygen Readings endpoints
+  /dissolved-oxygen-readings:
+    get:
+      tags:
+        - Dissolved Oxygen Readings
+      summary: Get all dissolved oxygen readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of dissolved oxygen readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DissolvedOxygenReading'
+    post:
+      tags:
+        - Dissolved Oxygen Readings
+      summary: Create new dissolved oxygen reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DissolvedOxygenReadingCreate'
+      responses:
+        '201':
+          description: Dissolved oxygen reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DissolvedOxygenReading'
+
+  /dissolved-oxygen-readings/{id}:
+    get:
+      tags:
+        - Dissolved Oxygen Readings
+      summary: Get dissolved oxygen readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of dissolved oxygen readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DissolvedOxygenReading'
+
+  # ORP Readings endpoints
+  /orp-readings:
+    get:
+      tags:
+        - ORP Readings
+      summary: Get all ORP readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of ORP readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+    post:
+      tags:
+        - ORP Readings
+      summary: Create new ORP reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorReadingCreate'
+      responses:
+        '201':
+          description: ORP reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorReading'
+
+  /orp-readings/{id}:
+    get:
+      tags:
+        - ORP Readings
+      summary: Get ORP readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of ORP readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+
+  # Salinity Readings endpoints
+  /salinity-readings:
+    get:
+      tags:
+        - Salinity Readings
+      summary: Get all salinity readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of salinity readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+    post:
+      tags:
+        - Salinity Readings
+      summary: Create new salinity reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorReadingCreate'
+      responses:
+        '201':
+          description: Salinity reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorReading'
+
+  /salinity-readings/{id}:
+    get:
+      tags:
+        - Salinity Readings
+      summary: Get salinity readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of salinity readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+
+  # Turbidity Readings endpoints
+  /turbidity-readings:
+    get:
+      tags:
+        - Turbidity Readings
+      summary: Get all turbidity readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of turbidity readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+    post:
+      tags:
+        - Turbidity Readings
+      summary: Create new turbidity reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorReadingCreate'
+      responses:
+        '201':
+          description: Turbidity reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorReading'
+
+  /turbidity-readings/{id}:
+    get:
+      tags:
+        - Turbidity Readings
+      summary: Get turbidity readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of turbidity readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+
+  # Water Level Readings endpoints
+  /water-level-readings:
+    get:
+      tags:
+        - Water Level Readings
+      summary: Get all water level readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of water level readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WaterLevelReading'
+    post:
+      tags:
+        - Water Level Readings
+      summary: Create new water level reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WaterLevelReadingCreate'
+      responses:
+        '201':
+          description: Water level reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaterLevelReading'
+
+  /water-level-readings/{id}:
+    get:
+      tags:
+        - Water Level Readings
+      summary: Get water level readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of water level readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WaterLevelReading'
+
+  # TOC Readings endpoints
+  /toc-readings:
+    get:
+      tags:
+        - TOC Readings
+      summary: Get all TOC readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of TOC readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TocReading'
+    post:
+      tags:
+        - TOC Readings
+      summary: Create new TOC reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TocReadingCreate'
+      responses:
+        '201':
+          description: TOC reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TocReading'
+
+  /toc-readings/{id}:
+    get:
+      tags:
+        - TOC Readings
+      summary: Get TOC readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of TOC readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TocReading'
+
+  # Fish Activity Readings endpoints
+  /fish-activity-readings:
+    get:
+      tags:
+        - Fish Activity Readings
+      summary: Get all fish activity readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of fish activity readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FishActivityReading'
+    post:
+      tags:
+        - Fish Activity Readings
+      summary: Create new fish activity reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FishActivityReadingCreate'
+      responses:
+        '201':
+          description: Fish activity reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FishActivityReading'
+
+  /fish-activity-readings/{id}:
+    get:
+      tags:
+        - Fish Activity Readings
+      summary: Get fish activity readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of fish activity readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FishActivityReading'
+
+  # Feeding Response Readings endpoints
+  /feeding-response-readings:
+    get:
+      tags:
+        - Feeding Response Readings
+      summary: Get all feeding response readings
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of feeding response readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedingResponseReading'
+    post:
+      tags:
+        - Feeding Response Readings
+      summary: Create new feeding response reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedingResponseReadingCreate'
+      responses:
+        '201':
+          description: Feeding response reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedingResponseReading'
+
+  /feeding-response-readings/{id}:
+    get:
+      tags:
+        - Feeding Response Readings
+      summary: Get feeding response readings by pool ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of feeding response readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedingResponseReading'
+
+  # Current Sensor Values endpoints
+  /current-sensor-values/latest/{pool_id}:
+    get:
+      tags:
+        - Current Sensor Values
+      summary: Get latest sensor readings for a pool
+      description: Retrieve the most recent readings from all sensors for a specific pool
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Latest sensor readings for the pool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentSensorValues'
+        '404':
+          description: Pool not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Daily Sensor Summary endpoints
+  /daily-sensor-summary:
+    get:
+      tags:
+        - Daily Sensor Summary
+      summary: Get daily sensor summaries
+      description: Retrieve daily aggregated sensor data
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: sensor_type
+          in: query
+          description: Filter by sensor type
+          schema:
+            type: string
+            enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response]
+        - name: start_date
+          in: query
+          description: Start date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          description: End date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of daily sensor summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DailySensorSummary'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Daily Sensor Summary
+      summary: Create daily sensor summary
+      description: Add a new daily sensor summary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DailySensorSummaryCreate'
+      responses:
+        '201':
+          description: Daily sensor summary created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailySensorSummary'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Daily sensor summary already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /daily-sensor-summary/{id}:
+    get:
+      tags:
+        - Daily Sensor Summary
+      summary: Get daily sensor summary by ID
+      description: Retrieve a specific daily sensor summary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Summary ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Daily sensor summary details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailySensorSummary'
+        '404':
+          description: Daily sensor summary not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Water Purity Readings endpoints
+  /water-purity-readings:
+    get:
+      tags:
+        - Water Purity Readings
+      summary: Get all water purity readings
+      description: Retrieve all water purity readings across all pools
+      responses:
+        '200':
+          description: List of water purity readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WaterPurityReading'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /water-purity-readings/pool/{pool_id}:
+    get:
+      tags:
+        - Water Purity Readings
+      summary: Get water purity readings by pool ID
+      description: Retrieve all water purity readings for a specific pool
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of water purity readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WaterPurityReading'
+        '404':
+          description: No water purity readings found for this pool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /water-purity-readings/pool/{pool_id}/latest:
+    get:
+      tags:
+        - Water Purity Readings
+      summary: Get latest water purity reading for a pool
+      description: Calculate and retrieve the latest water purity reading for a specific pool
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Latest water purity reading for the pool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaterPurityReading'
+        '404':
+          description: No water purity readings found for this pool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Norms endpoints
+  /norms:
+    get:
+      tags:
+        - Norms
+      summary: Get sensor limits/norms
+      description: Retrieve current sensor limits and thresholds
+      responses:
+        '200':
+          description: Current sensor norms
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Norms'
+        '404':
+          description: Norms not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Norms
+      summary: Update sensor limits/norms
+      description: Update sensor limits and thresholds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NormsUpdate'
+      responses:
+        '200':
+          description: Norms updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Norms'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Pool:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Unique identifier for the pool
+        number_of_fish:
+          type: integer
+          description: Number of fish in the pool
+        age_of_fish:
+          type: integer
+          description: Age of fish in days
+        capacity_liters:
+          type: number
+          description: Pool capacity in liters
+        name:
+          type: string
+          description: Pool name
+        location:
+          type: string
+          description: Pool location
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - pool_id
+        - capacity_liters
+
+    PoolCreate:
+      type: object
+      properties:
+        number_of_fish:
+          type: integer
+          description: Number of fish in the pool
+          default: 0
+        age_of_fish:
+          type: integer
+          description: Age of fish in days
+          default: 0
+        capacity_liters:
+          type: number
+          description: Pool capacity in liters
+        name:
+          type: string
+          description: Pool name
+        location:
+          type: string
+          description: Pool location
+      required:
+        - capacity_liters
+
+    PoolUpdate:
+      type: object
+      properties:
+        number_of_fish:
+          type: integer
+          description: Number of fish in the pool
+        age_of_fish:
+          type: integer
+          description: Age of fish in days
+        capacity_liters:
+          type: number
+          description: Pool capacity in liters
+        name:
+          type: string
+          description: Pool name
+        location:
+          type: string
+          description: Pool location
+
+    PhReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        ph_value:
+          type: number
+          description: pH value
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - ph_value
+        - reading_timestamp
+
+    PhReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        ph_value:
+          type: number
+          description: pH value (0-14)
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - ph_value
+
+    TemperatureReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        temperature_celsius:
+          type: number
+          description: Temperature in Celsius
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - temperature_celsius
+        - reading_timestamp
+
+    TemperatureReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        temperature_celsius:
+          type: number
+          description: Temperature in Celsius (-5 to 50)
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - temperature_celsius
+
+    SensorReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        value:
+          type: number
+          description: Sensor reading value
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - value
+        - reading_timestamp
+
+    SensorReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        value:
+          type: number
+          description: Sensor reading value
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - value
+
+    DissolvedOxygenReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        do_ppm:
+          type: number
+          description: Dissolved oxygen in PPM
+        do_percent_saturation:
+          type: number
+          description: Dissolved oxygen saturation percentage
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - do_ppm
+        - reading_timestamp
+
+    DissolvedOxygenReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        do_ppm:
+          type: number
+          description: Dissolved oxygen in PPM
+        do_percent_saturation:
+          type: number
+          description: Dissolved oxygen saturation percentage
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - do_ppm
+
+    WaterLevelReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        water_level_cm:
+          type: number
+          description: Water level in centimeters
+        flow_rate_lpm:
+          type: number
+          description: Flow rate in liters per minute
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - water_level_cm
+        - reading_timestamp
+
+    WaterLevelReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        water_level_cm:
+          type: number
+          description: Water level in centimeters
+        flow_rate_lpm:
+          type: number
+          description: Flow rate in liters per minute
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - water_level_cm
+
+    TocReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        toc_ppm:
+          type: number
+          description: Total Organic Carbon in PPM
+        bod_ppm:
+          type: number
+          description: Biological Oxygen Demand in PPM
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - toc_ppm
+        - reading_timestamp
+
+    TocReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        toc_ppm:
+          type: number
+          description: Total Organic Carbon in PPM
+        bod_ppm:
+          type: number
+          description: Biological Oxygen Demand in PPM
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - toc_ppm
+
+    FishActivityReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        activity_level:
+          type: string
+          description: Activity level (low, medium, high)
+        movement_count:
+          type: integer
+          description: Number of movements detected
+        average_speed:
+          type: number
+          description: Average movement speed
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - activity_level
+        - reading_timestamp
+
+    FishActivityReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        activity_level:
+          type: string
+          description: Activity level (low, medium, high)
+        movement_count:
+          type: integer
+          description: Number of movements detected
+        average_speed:
+          type: number
+          description: Average movement speed
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - activity_level
+
+    FeedingResponseReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        strike_rate_percent:
+          type: number
+          description: Strike rate percentage
+        response_time_seconds:
+          type: number
+          description: Response time in seconds
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - strike_rate_percent
+        - reading_timestamp
+
+    FeedingResponseReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        strike_rate_percent:
+          type: number
+          description: Strike rate percentage
+        response_time_seconds:
+          type: number
+          description: Response time in seconds
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - strike_rate_percent
+
+    CurrentSensorValues:
+      type: object
+      properties:
+        pool:
+          type: object
+          properties:
+            pool_id:
+              type: integer
+            name:
+              type: string
+            location:
+              type: string
+        sensors:
+          type: object
+          properties:
+            ph:
+              type: object
+              properties:
+                value:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            ammonia:
+              type: object
+              properties:
+                value:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            nitrite:
+              type: object
+              properties:
+                value:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            nitrate:
+              type: object
+              properties:
+                value:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            dissolved_oxygen:
+              type: object
+              properties:
+                value:
+                  type: number
+                saturation_percent:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            orp:
+              type: object
+              properties:
+                value:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            salinity:
+              type: object
+              properties:
+                value:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            temperature:
+              type: object
+              properties:
+                value:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            turbidity:
+              type: object
+              properties:
+                value:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            water_level:
+              type: object
+              properties:
+                level_cm:
+                  type: number
+                flow_rate_lpm:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            toc:
+              type: object
+              properties:
+                toc_ppm:
+                  type: number
+                bod_ppm:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            fish_activity:
+              type: object
+              properties:
+                activity_level:
+                  type: string
+                movement_count:
+                  type: integer
+                average_speed:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            feeding_response:
+              type: object
+              properties:
+                strike_rate_percent:
+                  type: number
+                response_time_seconds:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            water_purity:
+              type: object
+              properties:
+                quality:
+                  type: string
+                excellent:
+                  type: number
+                good:
+                  type: number
+                poor:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+
+    DailySensorSummary:
+      type: object
+      properties:
+        summary_id:
+          type: integer
+          description: Unique identifier for the summary
+        pool_id:
+          type: integer
+          description: Pool identifier
+        sensor_type:
+          type: string
+          description: Type of sensor
+          enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response]
+        summary_date:
+          type: string
+          format: date
+          description: Date of the summary
+        min_value:
+          type: number
+          description: Minimum value for the day
+        max_value:
+          type: number
+          description: Maximum value for the day
+        avg_value:
+          type: number
+          description: Average value for the day
+        reading_count:
+          type: integer
+          description: Number of readings for the day
+      required:
+        - summary_id
+        - pool_id
+        - sensor_type
+        - summary_date
+
+    DailySensorSummaryCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        sensor_type:
+          type: string
+          description: Type of sensor
+          enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response]
+        summary_date:
+          type: string
+          format: date
+          description: Date of the summary (YYYY-MM-DD)
+        min_value:
+          type: number
+          description: Minimum value for the day
+        max_value:
+          type: number
+          description: Maximum value for the day
+        avg_value:
+          type: number
+          description: Average value for the day
+        reading_count:
+          type: integer
+          description: Number of readings for the day
+      required:
+        - pool_id
+        - sensor_type
+        - summary_date
+
+    WaterPurityReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        quality:
+          type: string
+          description: Overall water quality assessment
+        excellent:
+          type: number
+          description: Excellent quality percentage
+        good:
+          type: number
+          description: Good quality percentage
+        poor:
+          type: number
+          description: Poor quality percentage
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - quality
+        - reading_timestamp
+
+    Norms:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for norms
+        PhMax:
+          type: number
+          description: Maximum pH value
+        PhMin:
+          type: number
+          description: Minimum pH value
+        AmmoniaMax:
+          type: number
+          description: Maximum ammonia value
+        AmmoniaMin:
+          type: number
+          description: Minimum ammonia value
+        NitriteMax:
+          type: number
+          description: Maximum nitrite value
+        NitriteMin:
+          type: number
+          description: Minimum nitrite value
+        NitrateMax:
+          type: number
+          description: Maximum nitrate value
+        NitrateMin:
+          type: number
+          description: Minimum nitrate value
+        DissolvedOxygenMax:
+          type: number
+          description: Maximum dissolved oxygen value
+        DissolvedOxygenMin:
+          type: number
+          description: Minimum dissolved oxygen value
+        OrpMax:
+          type: number
+          description: Maximum ORP value
+        OrpMin:
+          type: number
+          description: Minimum ORP value
+        SalinityMax:
+          type: number
+          description: Maximum salinity value
+        SalinityMin:
+          type: number
+          description: Minimum salinity value
+        TemperatureMax:
+          type: number
+          description: Maximum temperature value
+        TemperatureMin:
+          type: number
+          description: Minimum temperature value
+        TurbidityMax:
+          type: number
+          description: Maximum turbidity value
+        TurbidityMin:
+          type: number
+          description: Minimum turbidity value
+        WaterLevelMax:
+          type: number
+          description: Maximum water level value
+        WaterLevelMin:
+          type: number
+          description: Minimum water level value
+        TocMax:
+          type: number
+          description: Maximum TOC value
+        TocMin:
+          type: number
+          description: Minimum TOC value
+        FishActivityMax:
+          type: number
+          description: Maximum fish activity value
+        FishActivityMin:
+          type: number
+          description: Minimum fish activity value
+        FeedingResponseMax:
+          type: number
+          description: Maximum feeding response value
+        FeedingResponseMin:
+          type: number
+          description: Minimum feeding response value
+        WaterPurityMax:
+          type: number
+          description: Maximum water purity value
+        WaterPurityMin:
+          type: number
+          description: Minimum water purity value
+
+    NormsUpdate:
+      type: object
+      properties:
+        PhMax:
+          type: number
+          description: Maximum pH value
+        PhMin:
+          type: number
+          description: Minimum pH value
+        AmmoniaMax:
+          type: number
+          description: Maximum ammonia value
+        AmmoniaMin:
+          type: number
+          description: Minimum ammonia value
+        NitriteMax:
+          type: number
+          description: Maximum nitrite value
+        NitriteMin:
+          type: number
+          description: Minimum nitrite value
+        NitrateMax:
+          type: number
+          description: Maximum nitrate value
+        NitrateMin:
+          type: number
+          description: Minimum nitrate value
+        DissolvedOxygenMax:
+          type: number
+          description: Maximum dissolved oxygen value
+        DissolvedOxygenMin:
+          type: number
+          description: Minimum dissolved oxygen value
+        OrpMax:
+          type: number
+          description: Maximum ORP value
+        OrpMin:
+          type: number
+          description: Minimum ORP value
+        SalinityMax:
+          type: number
+          description: Maximum salinity value
+        SalinityMin:
+          type: number
+          description: Minimum salinity value
+        TemperatureMax:
+          type: number
+          description: Maximum temperature value
+        TemperatureMin:
+          type: number
+          description: Minimum temperature value
+        TurbidityMax:
+          type: number
+          description: Maximum turbidity value
+        TurbidityMin:
+          type: number
+          description: Minimum turbidity value
+        WaterLevelMax:
+          type: number
+          description: Maximum water level value
+        WaterLevelMin:
+          type: number
+          description: Minimum water level value
+        TocMax:
+          type: number
+          description: Maximum TOC value
+        TocMin:
+          type: number
+          description: Minimum TOC value
+        FishActivityMax:
+          type: number
+          description: Maximum fish activity value
+        FishActivityMin:
+          type: number
+          description: Minimum fish activity value
+        FeedingResponseMax:
+          type: number
+          description: Maximum feeding response value
+        FeedingResponseMin:
+          type: number
+          description: Minimum feeding response value
+        WaterPurityMax:
+          type: number
+          description: Maximum water purity value
+        WaterPurityMin:
+          type: number
+          description: Minimum water purity value
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+      required:
+        - error
+
+tags:
+  - name: Pools
+    description: Pool management operations
+  - name: pH Readings
+    description: pH sensor readings management
+  - name: Temperature Readings
+    description: Temperature sensor readings management
+  - name: Ammonia Readings
+    description: Ammonia sensor readings management
+  - name: Nitrite Readings
+    description: Nitrite sensor readings management
+  - name: Nitrate Readings
+    description: Nitrate sensor readings management
+  - name: Dissolved Oxygen Readings
+    description: Dissolved oxygen sensor readings management
+  - name: ORP Readings
+    description: Oxidation-reduction potential sensor readings management
+  - name: Salinity Readings
+    description: Salinity sensor readings management
+  - name: Turbidity Readings
+    description: Turbidity sensor readings management
+  - name: Water Level Readings
+    description: Water level sensor readings management
+  - name: TOC Readings
+    description: Total organic carbon sensor readings management
+  - name: Fish Activity Readings
+    description: Fish activity sensor readings management
+  - name: Feeding Response Readings
+    description: Feeding response sensor readings management
+  - name: Current Sensor Values
+    description: Latest sensor values across all sensor types
+  - name: Daily Sensor Summary
+    description: Daily aggregated sensor statistics
+  - name: Water Purity Readings
+    description: Calculated water purity assessments
+  - name: Norms
+    description: Sensor limits and thresholds configuration

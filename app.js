@@ -5,12 +5,29 @@ const cron = require('node-cron')
 const waterPurityController = require('./controllers/water-purity');
 const {Pool} = require('./database/database');
 
+// Swagger setup
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "Aquaculture Monitoring API Documentation"
+}));
+
+// API Documentation redirect
+app.get('/docs', (req, res) => {
+  res.redirect('/api-docs');
+});
 
 // Schedule a task to run every 5 minutes
 cron.schedule('*/5 * * * *', async () => {
