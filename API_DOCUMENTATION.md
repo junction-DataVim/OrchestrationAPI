@@ -30,6 +30,7 @@ A comprehensive REST API for monitoring aquaculture pools and sensor readings. T
 ### Biological Monitoring
 - **Fish Activity** - Activity level, movement count, and speed
 - **Feeding Response** - Strike rate percentage and response time
+- **Bacteria Density** - Bacteria count (CFU/ml), pathogenic/beneficial ratios
 - **Water Purity** - Calculated overall water quality assessment
 
 ## 🛠️ Installation
@@ -100,6 +101,7 @@ Each sensor type follows the same pattern:
 - `toc-readings`
 - `fish-activity-readings`
 - `feeding-response-readings`
+- `bacteria-density-readings`
 
 ### Current Values & Summaries
 - `GET /api/current-sensor-values/latest/{pool_id}` - Get latest readings from all sensors

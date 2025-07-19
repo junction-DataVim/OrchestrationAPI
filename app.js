@@ -58,6 +58,7 @@ app.use('/api/water-level-readings', require('./routes/water-level-readings'));
 app.use('/api/toc-readings', require('./routes/toc-readings'));
 app.use('/api/fish-activity-readings', require('./routes/fish-activity-readings'));
 app.use('/api/feeding-response-readings', require('./routes/feeding-response-readings'));
+app.use('/api/bacteria-density-readings', require('./routes/bacteria-density-readings'));
 app.use('/api/current-sensor-values', require('./routes/current-sensor-values'));
 app.use('/api/daily-sensor-summary', require('./routes/daily-sensor-summary'));
 app.use('/api/water-purity-readings', require('./routes/water-purity'));

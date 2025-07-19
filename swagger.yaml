@@ -1190,6 +1190,112 @@ paths:
                 items:
                   $ref: '#/components/schemas/FeedingResponseReading'
 
+  # Bacteria Density Readings endpoints
+  /bacteria-density-readings:
+    get:
+      tags:
+        - Bacteria Density Readings
+      summary: Get all bacteria density readings
+      description: Retrieve bacteria density readings with optional filtering
+      parameters:
+        - name: pool_id
+          in: query
+          description: Filter by pool ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of records to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of bacteria density readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BacteriaDensityReading'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Bacteria Density Readings
+      summary: Create new bacteria density reading
+      description: Add a new bacteria density reading for a pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BacteriaDensityReadingCreate'
+      responses:
+        '201':
+          description: Bacteria density reading created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BacteriaDensityReading'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bacteria-density-readings/{id}:
+    get:
+      tags:
+        - Bacteria Density Readings
+      summary: Get bacteria density readings by pool ID
+      description: Retrieve all bacteria density readings for a specific pool
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pool ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of bacteria density readings for the pool
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BacteriaDensityReading'
+        '404':
+          description: No bacteria density readings found for this pool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   # Current Sensor Values endpoints
   /current-sensor-values/latest/{pool_id}:
     get:
@@ -1242,7 +1348,7 @@ paths:
           description: Filter by sensor type
           schema:
             type: string
-            enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response]
+            enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response, bacteria_density]
         - name: start_date
           in: query
           description: Start date (YYYY-MM-DD)
@@ -1957,6 +2063,73 @@ components:
         - pool_id
         - strike_rate_percent
 
+    BacteriaDensityReading:
+      type: object
+      properties:
+        reading_id:
+          type: integer
+          description: Unique identifier for the reading
+        pool_id:
+          type: integer
+          description: Pool identifier
+        bacteria_density_cfu_ml:
+          type: number
+          description: Bacteria density in CFU/ml
+        total_bacteria_count:
+          type: integer
+          description: Total bacteria count
+        pathogenic_bacteria:
+          type: number
+          description: Pathogenic bacteria percentage
+        beneficial_bacteria:
+          type: number
+          description: Beneficial bacteria percentage
+        bacteria_type:
+          type: string
+          description: Type or species of bacteria
+        reading_timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+        notes:
+          type: string
+          description: Additional notes
+        Pool:
+          $ref: '#/components/schemas/Pool'
+      required:
+        - reading_id
+        - pool_id
+        - bacteria_density_cfu_ml
+        - reading_timestamp
+
+    BacteriaDensityReadingCreate:
+      type: object
+      properties:
+        pool_id:
+          type: integer
+          description: Pool identifier
+        bacteria_density_cfu_ml:
+          type: number
+          description: Bacteria density in CFU/ml (0-10,000,000)
+        total_bacteria_count:
+          type: integer
+          description: Total bacteria count
+        pathogenic_bacteria:
+          type: number
+          description: Pathogenic bacteria percentage (0-100)
+        beneficial_bacteria:
+          type: number
+          description: Beneficial bacteria percentage (0-100)
+        bacteria_type:
+          type: string
+          description: Type or species of bacteria
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - pool_id
+        - bacteria_density_cfu_ml
+
     CurrentSensorValues:
       type: object
       properties:
@@ -2144,6 +2317,42 @@ components:
                 reading_id:
                   type: integer
               nullable: true
+            bacteria_density:
+              type: object
+              properties:
+                bacteria_density_cfu_ml:
+                  type: number
+                total_bacteria_count:
+                  type: integer
+                pathogenic_bacteria:
+                  type: number
+                beneficial_bacteria:
+                  type: number
+                bacteria_type:
+                  type: string
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
+            water_purity:
+              type: object
+              properties:
+                quality:
+                  type: string
+                excellent:
+                  type: number
+                good:
+                  type: number
+                poor:
+                  type: number
+                timestamp:
+                  type: string
+                  format: date-time
+                reading_id:
+                  type: integer
+              nullable: true
 
     DailySensorSummary:
       type: object
@@ -2157,7 +2366,7 @@ components:
         sensor_type:
           type: string
           description: Type of sensor
-          enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response]
+          enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response, bacteria_density]
         summary_date:
           type: string
           format: date
@@ -2189,7 +2398,7 @@ components:
         sensor_type:
           type: string
           description: Type of sensor
-          enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response]
+          enum: [ph, ammonia, nitrite, nitrate, dissolved_oxygen, orp, salinity, temperature, turbidity, water_level, toc, fish_activity, feeding_response, bacteria_density]
         summary_date:
           type: string
           format: date
@@ -2328,6 +2537,12 @@ components:
         FeedingResponseMin:
           type: number
           description: Minimum feeding response value
+        BacteriaDensityMax:
+          type: number
+          description: Maximum bacteria density value
+        BacteriaDensityMin:
+          type: number
+          description: Minimum bacteria density value
         WaterPurityMax:
           type: number
           description: Maximum water purity value
@@ -2416,6 +2631,12 @@ components:
         FeedingResponseMin:
           type: number
           description: Minimum feeding response value
+        BacteriaDensityMax:
+          type: number
+          description: Maximum bacteria density value
+        BacteriaDensityMin:
+          type: number
+          description: Minimum bacteria density value
         WaterPurityMax:
           type: number
           description: Maximum water purity value
@@ -2461,6 +2682,8 @@ tags:
     description: Fish activity sensor readings management
   - name: Feeding Response Readings
     description: Feeding response sensor readings management
+  - name: Bacteria Density Readings
+    description: Bacteria density sensor readings management
   - name: Current Sensor Values
     description: Latest sensor values across all sensor types
   - name: Daily Sensor Summary

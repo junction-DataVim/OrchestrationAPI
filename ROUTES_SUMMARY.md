@@ -26,6 +26,7 @@
 - `toc-readings` - Total organic carbon (PPM)
 - `fish-activity-readings` - Fish behavior metrics
 - `feeding-response-readings` - Feeding response metrics
+- `bacteria-density-readings` - Bacteria density (CFU/ml)
 
 ### Sensor Endpoints Pattern:
 | Method | Endpoint | Description |

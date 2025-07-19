@@ -35,7 +35,8 @@ router.put('/', async (req, res) => {
       'OrpMax', 'OrpMin', 'SalinityMax', 'SalinityMin', 'TemperatureMax', 'TemperatureMin',
       'TurbidityMax', 'TurbidityMin', 'WaterLevelMax', 'WaterLevelMin',
       'TocMax', 'TocMin', 'FishActivityMax', 'FishActivityMin',
-      'FeedingResponseMax', 'FeedingResponseMin', 'WaterPurityMax', 'WaterPurityMin'
+      'FeedingResponseMax', 'FeedingResponseMin', 'BacteriaDensityMax', 'BacteriaDensityMin', 
+      'WaterPurityMax', 'WaterPurityMin'
     ];
     
     // Filter out invalid fields

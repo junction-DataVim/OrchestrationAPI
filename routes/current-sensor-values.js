@@ -3,7 +3,7 @@ const router = express.Router();
 const { getDatabase, PhReading, AmmoniaReading, NitriteReading, NitrateReading, 
         DissolvedOxygenReading, OrpReading, SalinityReading, TemperatureReading, 
         TurbidityReading, WaterLevelReading, TocReading, FishActivityReading, 
-        FeedingResponseReading, Pool,WaterPurityReading } = require('../database/database');
+        FeedingResponseReading, BacteriaDensityReading, Pool,WaterPurityReading } = require('../database/database');
 
 
 // GET latest sensor readings from all tables for a specific pool
@@ -20,7 +20,8 @@ router.get('/latest/:pool_id', async (req, res) => {
     // Fetch latest reading from each sensor type
     const [latestPh, latestAmmonia, latestNitrite, latestNitrate, latestDo, 
            latestOrp, latestSalinity, latestTemperature, latestTurbidity, 
-           latestWaterLevel, latestToc, latestFishActivity, latestFeedingResponse,lastestWaterPurity] = await Promise.all([
+           latestWaterLevel, latestToc, latestFishActivity, latestFeedingResponse, 
+           latestBacteriaDensity, lastestWaterPurity] = await Promise.all([
       PhReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
       AmmoniaReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
       NitriteReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
@@ -33,6 +34,8 @@ router.get('/latest/:pool_id', async (req, res) => {
       WaterLevelReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
       TocReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
       FishActivityReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
+      FeedingResponseReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
+      BacteriaDensityReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
       FeedingResponseReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] }),
         WaterPurityReading.findOne({ where: { pool_id }, order: [['reading_timestamp', 'DESC']] })
     ]);
@@ -115,6 +118,15 @@ router.get('/latest/:pool_id', async (req, res) => {
           response_time_seconds: latestFeedingResponse.response_time_seconds,
           timestamp: latestFeedingResponse.reading_timestamp,
           reading_id: latestFeedingResponse.reading_id
+        } : null,
+        bacteria_density: latestBacteriaDensity ? {
+          bacteria_density_cfu_ml: latestBacteriaDensity.bacteria_density_cfu_ml,
+          total_bacteria_count: latestBacteriaDensity.total_bacteria_count,
+          pathogenic_bacteria: latestBacteriaDensity.pathogenic_bacteria,
+          beneficial_bacteria: latestBacteriaDensity.beneficial_bacteria,
+          bacteria_type: latestBacteriaDensity.bacteria_type,
+          timestamp: latestBacteriaDensity.reading_timestamp,
+          reading_id: latestBacteriaDensity.reading_id
         } : null,
         water_purity: lastestWaterPurity ? {
           quality: lastestWaterPurity.quality,

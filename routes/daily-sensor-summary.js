@@ -73,7 +73,7 @@ router.post('/', async (req, res) => {
     }
 
     // Validate sensor_type
-    const validSensorTypes = ['ph', 'ammonia', 'nitrite', 'nitrate', 'dissolved_oxygen', 'orp', 'salinity', 'temperature', 'turbidity', 'water_level', 'toc', 'fish_activity', 'feeding_response'];
+    const validSensorTypes = ['ph', 'ammonia', 'nitrite', 'nitrate', 'dissolved_oxygen', 'orp', 'salinity', 'temperature', 'turbidity', 'water_level', 'toc', 'fish_activity', 'feeding_response', 'bacteria_density'];
     if (!validSensorTypes.includes(sensor_type)) {
       return res.status(400).json({ error: 'Invalid sensor_type' });
     }

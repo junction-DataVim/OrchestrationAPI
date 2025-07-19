@@ -570,6 +570,57 @@ const FeedingResponseReading = sequelize.define('FeedingResponseReading', {
     ]
 });
 
+// Define Bacteria Density Readings model
+const BacteriaDensityReading = sequelize.define('BacteriaDensityReading', {
+    reading_id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    pool_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Pool,
+            key: 'pool_id'
+        }
+    },
+    bacteria_density_cfu_ml: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+    },
+    total_bacteria_count: {
+        type: DataTypes.BIGINT
+    },
+    pathogenic_bacteria: {
+        type: DataTypes.DECIMAL(10, 2)
+    },
+    beneficial_bacteria: {
+        type: DataTypes.DECIMAL(10, 2)
+    },
+    bacteria_type: {
+        type: DataTypes.STRING(100)
+    },
+    reading_timestamp: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    },
+    notes: {
+        type: DataTypes.TEXT
+    }
+}, {
+    tableName: 'bacteria_density_readings',
+    timestamps: false,
+    indexes: [
+        {
+            fields: ['pool_id', 'reading_timestamp']
+        },
+        {
+            fields: ['pool_id', 'reading_timestamp', 'bacteria_density_cfu_ml']
+        }
+    ]
+});
+
 // Define Water Purity Readings model
 const WaterPurityReading = sequelize.define('WaterPurityReading', {
     reading_id: {
@@ -757,6 +808,16 @@ const Norms = sequelize.define('Norms', {
         allowNull: false,
         defaultValue: 0.0
     },
+    BacteriaDensityMax : {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 1000000.0
+    },
+    BacteriaDensityMin : {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0.0
+    },
     WaterPurityMax : {
         type: DataTypes.DECIMAL(5, 2),
         allowNull: false,
@@ -812,6 +873,9 @@ const Norms = sequelize.define('Norms', {
             fields: ['FeedingResponseMax', 'FeedingResponseMin']
         },
         {
+            fields: ['BacteriaDensityMax', 'BacteriaDensityMin']
+        },
+        {
             fields: ['WaterPurityMax', 'WaterPurityMin']
         }
     ]
@@ -832,7 +896,9 @@ Pool.hasMany(WaterLevelReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(TocReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(FishActivityReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(FeedingResponseReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
+Pool.hasMany(BacteriaDensityReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 Pool.hasMany(WaterPurityReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
+Pool.hasMany(BacteriaDensityReading, { foreignKey: 'pool_id', onDelete: 'CASCADE' });
 
 // Reverse associations
 PhReading.belongsTo(Pool, { foreignKey: 'pool_id' });
@@ -848,7 +914,9 @@ WaterLevelReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 TocReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 FishActivityReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 FeedingResponseReading.belongsTo(Pool, { foreignKey: 'pool_id' });
+BacteriaDensityReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 WaterPurityReading.belongsTo(Pool, { foreignKey: 'pool_id' });
+BacteriaDensityReading.belongsTo(Pool, { foreignKey: 'pool_id' });
 
 // Database initialization function
 const initializeDatabase = async () => {
@@ -885,6 +953,8 @@ module.exports = {
     TocReading,
     FishActivityReading,
     FeedingResponseReading,
+    BacteriaDensityReading,
     WaterPurityReading,
-    Norms
+    Norms,
+    BacteriaDensityReading
 };
